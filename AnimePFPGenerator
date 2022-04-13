@@ -1,0 +1,47 @@
+import requests
+import requests_html
+
+from tqdm import tqdm
+from io import BytesIO
+from html import unescape
+from bs4 import BeautifulSoup
+from secrets import token_hex
+
+__all__ = ('GetAnimePFP', )
+
+class ExtendedBytesIO(BytesIO):
+    '''io.BytesIO, but with save function.'''
+    def save(self, directory: str = None, filename: str = None, format: str = None):
+        filename = filename or token_hex(10)
+        content = self.getvalue()
+
+        with open(f'{directory or ""}\\{filename}.{format or "jpg"}', 'wb') as file:
+            file.write(content)
+
+        return file.close()
+
+def GetAnimePFP(session: 'requests_html.HTMLSession' = None, render_count: int = None, loading_bar: bool = None):
+    '''
+    # Example
+    ```python
+    from AnimePFPGenerator import GetAnimePFP
+
+    for pfp in GetAnimePFP():
+        pfp.save()
+    '''
+    session = session or requests_html.HTMLSession()
+    response = session.get('https://avatars.alphacoders.com/by_category/3')
+    for _ in tqdm(range(render_count or 5)) if loading_bar is None or loading_bar is True else range(render_count or 5):
+        response.html.render()
+    text = unescape(response.html.html)
+    soup = BeautifulSoup(text, 'html.parser')
+    links = soup.findAll('img')
+    links = [link.get('src') for link in links]
+
+    for link in links:
+        content = requests.get(link).content
+        yield ExtendedBytesIO(content)
+
+if __name__ == '__main__':
+    for i in GetAnimePFP():
+        i.save('test')
