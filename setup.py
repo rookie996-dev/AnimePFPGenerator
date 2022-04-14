@@ -16,8 +16,7 @@ setup(
     author='LUA9',
     maintainer='LUA9',
     url='https://github.com/LUA9/AnimePFPGenerator',
-    py_modules=['AnimePFP'],
-    requires=['aiohttp', 'pyppeteer', 'bs4'],
-    long_description='# Example\n```python\nimport AnimePFP\nAnimePFP.GetAnimePictures(directory=\'test\')\n```',
-    long_description_content_type='text/markdown',
+    packages=['AnimePFP'],
+    requires=['aiohttp', 'pyppeteer', 'bs4', 'tqdm'],
+    include_package_data=True,
 )
