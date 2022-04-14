@@ -3,5 +3,6 @@
 ```python
 import AnimePFP
 
-AnimePFP.GetAnimePicture(directory='test')
+for picture in AnimePFP.GetAnimePictures():
+  picture.save('test')
 ```
